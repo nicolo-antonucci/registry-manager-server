@@ -1,17 +1,13 @@
-CREATE DATABASE IF NOT EXISTS registries;
+DROP TABLE IF EXISTS registries;
 
-USE registries;
-
-DROP TABLE registries;
-
-CREATE TABLE registries (
-	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(100) NOT NULL,
-	surname VARCHAR(100) NOT NULL,
-	email VARCHAR(100) NOT NULL,
-	address VARCHAR(100),
-	location VARCHAR(100),
-	city VARCHAR(100),
-	province VARCHAR(100),
-	notes VARCHAR(1000)
+CREATE TABLE IF NOT EXISTS registries (
+	id INT NOT NULL PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	surname VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	address VARCHAR(255),
+	location VARCHAR(255),
+	city VARCHAR(255),
+	province VARCHAR(255),
+	notes VARCHAR(255)
 );

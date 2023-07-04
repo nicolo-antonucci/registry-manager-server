@@ -26,7 +26,7 @@ public class RegistryController {
         this.repository = repository;
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseSchema<ReadRegistriesDto, BaseError> readRegistries(
             @RequestBody ReadRegistriesBody readRegistriesBody
     ) {
@@ -113,7 +113,7 @@ public class RegistryController {
         }
     }
 
-    @PostMapping("")
+    @PostMapping("/new")
     public ResponseSchema<PostRegistryResponse, BaseError> postRegistry(@Valid @NotNull @RequestBody Registry registry) {
         try {
             repository.save(registry);
