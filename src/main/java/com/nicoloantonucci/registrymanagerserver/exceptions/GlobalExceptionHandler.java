@@ -1,24 +1,21 @@
 package com.nicoloantonucci.registrymanagerserver.exceptions;
 
-import com.nicoloantonucci.registrymanagerserver.model.BaseError;
-import com.nicoloantonucci.registrymanagerserver.model.Registry;
-import com.nicoloantonucci.registrymanagerserver.model.ResponseSchema;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(value
-            = {IllegalArgumentException.class, IllegalStateException.class})
-    protected ResponseSchema<Registry, BaseError> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
-                                                                               HttpStatus status, WebRequest request) {
 
-
-        return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid request"));
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @NotNull HttpHeaders headers, @NotNull HttpStatusCode status, @NotNull WebRequest request) {
+        String bodyOfResponse = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        return new ResponseEntity<>(bodyOfResponse, HttpStatus.BAD_REQUEST);
     }
 }

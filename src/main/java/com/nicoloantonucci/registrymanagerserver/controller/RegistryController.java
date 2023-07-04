@@ -37,7 +37,6 @@ public class RegistryController {
         if (readRegistriesBody.getElementsPerPage() < 1) {
             return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid number of elements per page"));
         }
-
         ArrayList<Registry> registries = new ArrayList<>(repository.findAll());
         Set<Registry> result = IntStream.range(0, registries.size())
                 .filter(i -> i >= (readRegistriesBody.getPage() - 1) * readRegistriesBody.getElementsPerPage() && i < (readRegistriesBody.getPage() * readRegistriesBody.getElementsPerPage()))
@@ -53,6 +52,18 @@ public class RegistryController {
         ), null);
     }
 
+    @PostMapping("/new")
+    public ResponseSchema<PostRegistryResponse, BaseError> postRegistry(@Valid @NotNull @RequestBody NewRegistry registry) {
+        try {
+            Registry result = repository.save(new Registry(registry));
+            return new ResponseSchema<>(true, new PostRegistryResponse(true), null);
+        } catch (IllegalArgumentException e) {
+            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
+        } catch (OptimisticLockException e) {
+            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.CONFLICT, "Conflict"));
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseSchema<Registry, BaseError> getRegistry(@PathVariable Integer id) {
         try {
@@ -63,7 +74,6 @@ public class RegistryController {
                         null
                 );
             }
-
             throw new EntityNotFoundException();
         } catch (NumberFormatException e) {
             return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid id"));
@@ -73,14 +83,13 @@ public class RegistryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseSchema<UpdateRegistryResponse, BaseError> updateRegistry(@PathVariable @NotNull Integer id, @Valid @NotNull @RequestBody Registry registry) {
+    public ResponseSchema<UpdateRegistryResponse, BaseError> updateRegistry(@PathVariable @NotNull Integer id, @Valid @NotNull @RequestBody NewRegistry registry) {
         try {
             Optional<Registry> result = repository.findById(id);
             if (result.isPresent()) {
-                repository.save(registry);
+                repository.save(new Registry(id, registry));
                 return new ResponseSchema<>(true, new UpdateRegistryResponse(true), null);
             }
-
             throw new EntityNotFoundException();
         } catch (IllegalArgumentException e) {
             return new ResponseSchema<>(false, new UpdateRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
@@ -93,14 +102,13 @@ public class RegistryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseSchema<DeleteRegistryResponse, BaseError> updateRegistry(@PathVariable @NotNull Integer id) {
+    public ResponseSchema<DeleteRegistryResponse, BaseError> deleteRegistry(@PathVariable @NotNull Integer id) {
         try {
             Optional<Registry> result = repository.findById(id);
             if (result.isPresent()) {
                 repository.deleteById(id);
                 return new ResponseSchema<>(true, new DeleteRegistryResponse(true), null);
             }
-
             throw new EntityNotFoundException();
         } catch (IllegalArgumentException e) {
             return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Invalid id"));
@@ -110,18 +118,6 @@ public class RegistryController {
             return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.NOT_FOUND, "Registry not found"));
         } catch (Exception e) {
             return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.INSUFFICIENT_STORAGE, "Internal server error"));
-        }
-    }
-
-    @PostMapping("/new")
-    public ResponseSchema<PostRegistryResponse, BaseError> postRegistry(@Valid @NotNull @RequestBody Registry registry) {
-        try {
-            repository.save(registry);
-            return new ResponseSchema<>(true, new PostRegistryResponse(true), null);
-        } catch (IllegalArgumentException e) {
-            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
-        } catch (OptimisticLockException e) {
-            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.CONFLICT, "Conflict"));
         }
     }
 

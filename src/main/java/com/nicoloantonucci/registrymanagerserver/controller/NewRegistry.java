@@ -1,62 +1,38 @@
-package com.nicoloantonucci.registrymanagerserver.model;
+package com.nicoloantonucci.registrymanagerserver.controller;
 
-import com.nicoloantonucci.registrymanagerserver.controller.NewRegistry;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
 
-@Entity
-@Data
-@Table(name = "registries")
-public class Registry {
-    @Id
-    @SequenceGenerator(name = "registries_seq", sequenceName = "registries_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registries_seq")
-    @Column(name = "id")
-    private Integer id;
-
+public class NewRegistry {
     @NotNull(message = "Name must not be null")
     @Pattern(regexp = "^[A-Za-z ,.'-]+$", message = "Name must satisfy regexp ^[A-Za-z ,.'-]+$")
-    @Column(name = "name")
     private String name;
 
     @NotNull(message = "Surname must not be null")
     @Pattern(regexp = "^[A-Za-z ,.'-]+$", message = "Surname must satisfy regexp ^[A-Za-z ,.'-]+$")
-    @Column(name = "surname")
     private String surname;
 
     @Pattern(regexp = "(piazza|via|viale)\\s[A-Z][A-Za-z']+(\\s[A-Za-z']+)*")
-    @Column(name = "address")
     private String address;
 
     @Pattern(regexp = "([A-Z][A-Za-z']+(\\s[A-Za-z']+)*)")
-    @Column(name = "location")
     private String location;
 
     @Pattern(regexp = "([A-Z][A-Za-z']+(\\s[A-Za-z']+)*)")
-    @Column(name = "city")
     private String city;
 
     @Pattern(regexp = "([A-Z][A-Za-z']+(\\s[A-Za-z']+)*)")
-    @Column(name = "province")
     private String province;
 
     @NotNull(message = "Email must not be null")
     @Email(message = "Email must be valid")
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "notes")
     private String notes;
 
-    public Registry() {
-
-    }
-
-    public Registry(
-            Integer id,
+    public NewRegistry(
             @NotNull @Pattern(regexp = "^[A-Za-z ,.'-]+$") String name,
             @NotNull @Pattern(regexp = "^[A-Za-z ,.'-]+$") String surname,
             @Pattern(regexp = "(piazza|via|viale)\\s[A-Z][A-Za-z']+(\\s[A-Za-z']+)*") String address,
@@ -66,7 +42,6 @@ public class Registry {
             @NotNull @Email String email,
             String notes
     ) {
-        this.id = id;
         this.name = name;
         this.surname = surname;
         this.address = address;
@@ -75,33 +50,6 @@ public class Registry {
         this.province = province;
         this.email = email;
         this.notes = notes;
-    }
-
-    public Registry(NewRegistry newRegistry) {
-        this.name = newRegistry.getName();
-        this.city = newRegistry.getCity();
-        this.address = newRegistry.getAddress();
-        this.location = newRegistry.getLocation();
-        this.surname = newRegistry.getSurname();
-        this.email = newRegistry.getEmail();
-        this.notes = newRegistry.getNotes();
-        this.province = newRegistry.getProvince();
-    }
-
-    public Registry(@NotNull Integer id, NewRegistry newRegistry) {
-        this.id = id;
-        this.name = newRegistry.getName();
-        this.city = newRegistry.getCity();
-        this.address = newRegistry.getAddress();
-        this.location = newRegistry.getLocation();
-        this.surname = newRegistry.getSurname();
-        this.email = newRegistry.getEmail();
-        this.notes = newRegistry.getNotes();
-        this.province = newRegistry.getProvince();
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     @NotNull
