@@ -1,11 +1,10 @@
-package com.nicoloantonucci.registrymanagerserver.controller;
+package com.nicoloantonucci.registrymanagerserver.model;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class NewRegistry {
+public class PostRegistryBody extends ReadRegistriesBody {
     @NotNull(message = "Name must not be null")
     @Pattern(regexp = "^[A-Za-z ,.'-]+$", message = "Name must satisfy regexp ^[A-Za-z ,.'-]+$")
     private String name;
@@ -32,7 +31,7 @@ public class NewRegistry {
 
     private String notes;
 
-    public NewRegistry(
+    public PostRegistryBody(
             @NotNull @Pattern(regexp = "^[A-Za-z ,.'-]+$") String name,
             @NotNull @Pattern(regexp = "^[A-Za-z ,.'-]+$") String surname,
             @Pattern(regexp = "(piazza|via|viale)\\s[A-Z][A-Za-z']+(\\s[A-Za-z']+)*") String address,
@@ -40,8 +39,11 @@ public class NewRegistry {
             @Pattern(regexp = "([A-Z][A-Za-z']+(\\s[A-Za-z']+)*)") String city,
             @Pattern(regexp = "([A-Z][A-Za-z']+(\\s[A-Za-z']+)*)") String province,
             @NotNull @Email String email,
-            String notes
+            String notes,
+            @NotNull Integer page,
+            @NotNull Integer elementsPerPage
     ) {
+        super(page, elementsPerPage);
         this.name = name;
         this.surname = surname;
         this.address = address;

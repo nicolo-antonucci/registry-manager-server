@@ -37,15 +37,17 @@ public class RegistryController {
         if (readRegistriesBody.getElementsPerPage() < 1) {
             return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid number of elements per page"));
         }
+
         ArrayList<Registry> registries = new ArrayList<>(repository.findAll());
+        int pages = (int) Math.ceil((double) registries.size() / (double) readRegistriesBody.getElementsPerPage());
+        int page = readRegistriesBody.getPage() > pages ? pages : readRegistriesBody.getPage();
         Set<Registry> result = IntStream.range(0, registries.size())
-                .filter(i -> i >= (readRegistriesBody.getPage() - 1) * readRegistriesBody.getElementsPerPage() && i < (readRegistriesBody.getPage() * readRegistriesBody.getElementsPerPage()))
+                .filter(i -> i >= (page - 1) * readRegistriesBody.getElementsPerPage() && i < (page * readRegistriesBody.getElementsPerPage()))
                 .mapToObj(registries::get)
                 .collect(Collectors.toSet());
 
-        int pages = (int) Math.ceil((double) registries.size() / (double) readRegistriesBody.getElementsPerPage());
         return new ResponseSchema<>(true, new ReadRegistriesDto(result,
-                readRegistriesBody.getPage(),
+                page,
                 pages,
                 readRegistriesBody.getElementsPerPage(),
                 registries.size()
@@ -53,14 +55,28 @@ public class RegistryController {
     }
 
     @PostMapping("/new")
-    public ResponseSchema<PostRegistryResponse, BaseError> postRegistry(@Valid @NotNull @RequestBody NewRegistry registry) {
+    public ResponseSchema<ReadRegistriesDto, BaseError> postRegistry(@Valid @NotNull @RequestBody PostRegistryBody postRegistryBody) {
         try {
-            Registry result = repository.save(new Registry(registry));
-            return new ResponseSchema<>(true, new PostRegistryResponse(true), null);
+            Registry result = repository.save(new Registry(postRegistryBody));
+            ArrayList<Registry> registries = new ArrayList<>(repository.findAll());
+            int pages = (int) Math.ceil((double) registries.size() / (double) postRegistryBody.getElementsPerPage());
+            int index = registries.indexOf(result);
+            int page = Math.max((int) Math.ceil((double) index / (double) postRegistryBody.getElementsPerPage()), 1);
+            Set<Registry> registriesSet = IntStream.range(0, registries.size())
+                    .filter(i -> i >= (page - 1) * postRegistryBody.getElementsPerPage() && i < (page * postRegistryBody.getElementsPerPage()))
+                    .mapToObj(registries::get)
+                    .collect(Collectors.toSet());
+
+            return new ResponseSchema<>(true, new ReadRegistriesDto(registriesSet,
+                    page,
+                    pages,
+                    postRegistryBody.getElementsPerPage(),
+                    registries.size()
+            ), null);
         } catch (IllegalArgumentException e) {
-            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
+            return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
         } catch (OptimisticLockException e) {
-            return new ResponseSchema<>(false, new PostRegistryResponse(false), new BaseError(HttpStatus.CONFLICT, "Conflict"));
+            return new ResponseSchema<>(false, null, new BaseError(HttpStatus.CONFLICT, "Conflict"));
         }
     }
 
@@ -83,7 +99,7 @@ public class RegistryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseSchema<UpdateRegistryResponse, BaseError> updateRegistry(@PathVariable @NotNull Integer id, @Valid @NotNull @RequestBody NewRegistry registry) {
+    public ResponseSchema<UpdateRegistryResponse, BaseError> updateRegistry(@PathVariable @NotNull Integer id, @Valid @NotNull @RequestBody PostRegistryBody registry) {
         try {
             Optional<Registry> result = repository.findById(id);
             if (result.isPresent()) {

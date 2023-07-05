@@ -14,7 +14,7 @@ public class ReadRegistriesDto {
     private Integer pages;
 
     @NotNull
-    private Integer elementsPerPages;
+    private Integer elementsPerPage;
 
     @NotNull
     private Integer totalElements;
@@ -27,7 +27,7 @@ public class ReadRegistriesDto {
             @NotNull Integer totalElements
     ) {
         this.registries = registries;
-        this.elementsPerPages = elementsPerPage;
+        this.elementsPerPage = elementsPerPage;
         this.page = page;
         this.pages = pages;
         this.totalElements = totalElements;
@@ -60,12 +60,12 @@ public class ReadRegistriesDto {
     }
 
     @NotNull
-    public Integer getElementsPerPages() {
-        return elementsPerPages;
+    public Integer getElementsPerPage() {
+        return elementsPerPage;
     }
 
-    public void setElementsPerPages(@NotNull Integer elementsPerPages) {
-        this.elementsPerPages = elementsPerPages;
+    public void setElementsPerPage(@NotNull Integer elementsPerPage) {
+        this.elementsPerPage = elementsPerPage;
     }
 
     @NotNull

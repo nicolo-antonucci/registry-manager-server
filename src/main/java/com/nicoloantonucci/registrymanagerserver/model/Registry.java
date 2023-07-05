@@ -1,6 +1,5 @@
 package com.nicoloantonucci.registrymanagerserver.model;
 
-import com.nicoloantonucci.registrymanagerserver.controller.NewRegistry;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -77,27 +76,27 @@ public class Registry {
         this.notes = notes;
     }
 
-    public Registry(NewRegistry newRegistry) {
-        this.name = newRegistry.getName();
-        this.city = newRegistry.getCity();
-        this.address = newRegistry.getAddress();
-        this.location = newRegistry.getLocation();
-        this.surname = newRegistry.getSurname();
-        this.email = newRegistry.getEmail();
-        this.notes = newRegistry.getNotes();
-        this.province = newRegistry.getProvince();
+    public Registry(PostRegistryBody postRegistryBody) {
+        this.name = postRegistryBody.getName();
+        this.city = postRegistryBody.getCity();
+        this.address = postRegistryBody.getAddress();
+        this.location = postRegistryBody.getLocation();
+        this.surname = postRegistryBody.getSurname();
+        this.email = postRegistryBody.getEmail();
+        this.notes = postRegistryBody.getNotes();
+        this.province = postRegistryBody.getProvince();
     }
 
-    public Registry(@NotNull Integer id, NewRegistry newRegistry) {
+    public Registry(@NotNull Integer id, PostRegistryBody postRegistryBody) {
         this.id = id;
-        this.name = newRegistry.getName();
-        this.city = newRegistry.getCity();
-        this.address = newRegistry.getAddress();
-        this.location = newRegistry.getLocation();
-        this.surname = newRegistry.getSurname();
-        this.email = newRegistry.getEmail();
-        this.notes = newRegistry.getNotes();
-        this.province = newRegistry.getProvince();
+        this.name = postRegistryBody.getName();
+        this.city = postRegistryBody.getCity();
+        this.address = postRegistryBody.getAddress();
+        this.location = postRegistryBody.getLocation();
+        this.surname = postRegistryBody.getSurname();
+        this.email = postRegistryBody.getEmail();
+        this.notes = postRegistryBody.getNotes();
+        this.province = postRegistryBody.getProvince();
     }
 
     public Integer getId() {
