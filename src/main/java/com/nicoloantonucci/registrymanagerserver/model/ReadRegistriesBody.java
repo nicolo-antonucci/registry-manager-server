@@ -1,37 +1,101 @@
 package com.nicoloantonucci.registrymanagerserver.model;
 
-import jakarta.validation.constraints.NotNull;
-
 public class ReadRegistriesBody {
-    @NotNull
-    private Integer page = 1;
-    @NotNull
-    private Integer elementsPerPage = 10;
+    private String name;
 
-    public ReadRegistriesBody(
-            @NotNull Integer page,
-            @NotNull Integer elementsPerPage
-    ) {
-        this.page = page;
-        this.elementsPerPage = elementsPerPage;
+    private String surname;
+
+    private String address;
+
+    private String location;
+
+    private String city;
+
+    private String province;
+
+    private String email;
+
+    private String notes;
+
+    public ReadRegistriesBody(String name,
+                              String surname,
+                              String address,
+                              String location,
+                              String city,
+                              String province,
+                              String email,
+                              String notes) {
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.location = location;
+        this.city = city;
+        this.province = province;
+        this.email = email;
+        this.notes = notes;
     }
 
-    @NotNull
-    public Integer getPage() {
-        return page;
+    public String getName() {
+        return name;
     }
 
-    public void setPage(@NotNull Integer page) {
-        this.page = page;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @NotNull
-    public Integer getElementsPerPage() {
-        return elementsPerPage;
+    public String getSurname() {
+        return surname;
     }
 
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
-    public void setElementsPerPage(@NotNull Integer elementsPerPage) {
-        this.elementsPerPage = elementsPerPage;
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

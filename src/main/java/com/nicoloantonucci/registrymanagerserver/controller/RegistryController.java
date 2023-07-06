@@ -7,14 +7,15 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/registries")
@@ -28,55 +29,75 @@ public class RegistryController {
 
     @PostMapping("")
     public ResponseSchema<ReadRegistriesDto, BaseError> readRegistries(
-            @RequestBody ReadRegistriesBody readRegistriesBody
+            @RequestBody ReadRegistriesBody readRegistriesBody,
+            @PageableDefault(size = 5)
+            @SortDefault.SortDefaults(@SortDefault(sort = "name", direction = org.springframework.data.domain.Sort.Direction.ASC))
+            Pageable pageable
     ) {
-        if (readRegistriesBody.getPage() < 1) {
-            return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid page number"));
-        }
+        Page<Registry> registries = repository.findAllByQuery(
+                readRegistriesBody.getName() != null ? readRegistriesBody.getName() : "",
+                readRegistriesBody.getSurname() != null ? readRegistriesBody.getSurname() : "",
+                readRegistriesBody.getAddress() != null ? readRegistriesBody.getAddress() : "",
+                readRegistriesBody.getLocation() != null ? readRegistriesBody.getLocation() : "",
+                readRegistriesBody.getCity() != null ? readRegistriesBody.getCity() : "",
+                readRegistriesBody.getProvince() != null ? readRegistriesBody.getProvince() : "",
+                readRegistriesBody.getEmail() != null ? readRegistriesBody.getEmail() : "",
+                readRegistriesBody.getNotes() != null ? readRegistriesBody.getNotes() : "",
+                pageable
+        );
 
-        if (readRegistriesBody.getElementsPerPage() < 1) {
-            return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Invalid number of elements per page"));
-        }
 
-        ArrayList<Registry> registries = new ArrayList<>(repository.findAll());
-        int pages = (int) Math.ceil((double) registries.size() / (double) readRegistriesBody.getElementsPerPage());
-        int page = readRegistriesBody.getPage() > pages ? pages : readRegistriesBody.getPage();
-        Set<Registry> result = IntStream.range(0, registries.size())
-                .filter(i -> i >= (page - 1) * readRegistriesBody.getElementsPerPage() && i < (page * readRegistriesBody.getElementsPerPage()))
-                .mapToObj(registries::get)
-                .collect(Collectors.toSet());
-
-        return new ResponseSchema<>(true, new ReadRegistriesDto(result,
-                page,
-                pages,
-                readRegistriesBody.getElementsPerPage(),
-                registries.size()
-        ), null);
+        return new ResponseSchema<>(true, new ReadRegistriesDto(registries.toSet(),
+                pageable.getPageNumber(),
+                registries.getTotalPages(),
+                pageable.getPageSize(),
+                (int) registries.getTotalElements(),
+                null), null);
     }
 
     @PostMapping("/new")
-    public ResponseSchema<ReadRegistriesDto, BaseError> postRegistry(@Valid @NotNull @RequestBody PostRegistryBody postRegistryBody) {
+    public ResponseSchema<ReadRegistriesDto, BaseError> postRegistry(@Valid @NotNull @RequestBody PostRegistryBody postRegistryBody,
+                                                                     @PageableDefault(size = 20)
+                                                                     @SortDefault.SortDefaults(@SortDefault(sort = "name", direction = org.springframework.data.domain.Sort.Direction.ASC))
+                                                                     Pageable pageable) {
         try {
             Registry result = repository.save(new Registry(postRegistryBody));
-            ArrayList<Registry> registries = new ArrayList<>(repository.findAll());
-            int pages = (int) Math.ceil((double) registries.size() / (double) postRegistryBody.getElementsPerPage());
-            int index = registries.indexOf(result);
-            int page = Math.max((int) Math.ceil((double) index / (double) postRegistryBody.getElementsPerPage()), 1);
-            Set<Registry> registriesSet = IntStream.range(0, registries.size())
-                    .filter(i -> i >= (page - 1) * postRegistryBody.getElementsPerPage() && i < (page * postRegistryBody.getElementsPerPage()))
-                    .mapToObj(registries::get)
-                    .collect(Collectors.toSet());
-
-            return new ResponseSchema<>(true, new ReadRegistriesDto(registriesSet,
-                    page,
-                    pages,
-                    postRegistryBody.getElementsPerPage(),
-                    registries.size()
-            ), null);
+            ArrayList<Registry> allRegistries = new ArrayList<>(repository.findAll());
+            Pageable newPageable = pageable.withPage((int) Math.floor((double) allRegistries.indexOf(result) / (double) pageable.getPageSize()));
+            Page<Registry> registries = repository.findAll(pageable);
+            return new ResponseSchema<>(true, new ReadRegistriesDto(registries.toSet(),
+                    Math.min(registries.getTotalPages(), newPageable.getPageNumber()),
+                    registries.getTotalPages(),
+                    pageable.getPageSize(),
+                    (int) registries.getTotalElements(),
+                    null), null);
         } catch (IllegalArgumentException e) {
             return new ResponseSchema<>(false, null, new BaseError(HttpStatus.BAD_REQUEST, "Registry cannot be null"));
         } catch (OptimisticLockException e) {
             return new ResponseSchema<>(false, null, new BaseError(HttpStatus.CONFLICT, "Conflict"));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseSchema<DeleteRegistriesDto, BaseError> deleteRegistry(@PathVariable @NotNull Integer id, @RequestBody @NotNull ReadRegistriesBody deleteRegistryBody,
+                                                                         @PageableDefault(size = 20)
+                                                                         @SortDefault.SortDefaults(@SortDefault(sort = "name", direction = org.springframework.data.domain.Sort.Direction.ASC))
+                                                                         Pageable pageable) {
+        try {
+            Optional<Registry> entity = repository.findById(id);
+            if (entity.isPresent()) {
+                repository.deleteById(id);
+                return new ResponseSchema<>(true, new DeleteRegistriesDto(false), null);
+            }
+            throw new EntityNotFoundException();
+        } catch (IllegalArgumentException e) {
+            return new ResponseSchema<>(false, new DeleteRegistriesDto(false), new BaseError(HttpStatus.BAD_REQUEST, "Invalid id"));
+        } catch (OptimisticLockException e) {
+            return new ResponseSchema<>(false, new DeleteRegistriesDto(false), new BaseError(HttpStatus.CONFLICT, "Conflict"));
+        } catch (EntityNotFoundException e) {
+            return new ResponseSchema<>(false, new DeleteRegistriesDto(false), new BaseError(HttpStatus.NOT_FOUND, "Registry not found"));
+        } catch (Exception e) {
+            return new ResponseSchema<>(false, new DeleteRegistriesDto(false), new BaseError(HttpStatus.INSUFFICIENT_STORAGE, "Internal server error"));
         }
     }
 
@@ -116,26 +137,4 @@ public class RegistryController {
         }
 
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseSchema<DeleteRegistryResponse, BaseError> deleteRegistry(@PathVariable @NotNull Integer id) {
-        try {
-            Optional<Registry> result = repository.findById(id);
-            if (result.isPresent()) {
-                repository.deleteById(id);
-                return new ResponseSchema<>(true, new DeleteRegistryResponse(true), null);
-            }
-            throw new EntityNotFoundException();
-        } catch (IllegalArgumentException e) {
-            return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.BAD_REQUEST, "Invalid id"));
-        } catch (OptimisticLockException e) {
-            return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.CONFLICT, "Conflict"));
-        } catch (EntityNotFoundException e) {
-            return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.NOT_FOUND, "Registry not found"));
-        } catch (Exception e) {
-            return new ResponseSchema<>(false, new DeleteRegistryResponse(false), new BaseError(HttpStatus.INSUFFICIENT_STORAGE, "Internal server error"));
-        }
-    }
-
-
 }

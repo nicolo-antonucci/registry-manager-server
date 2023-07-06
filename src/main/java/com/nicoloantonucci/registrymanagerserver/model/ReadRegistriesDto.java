@@ -14,23 +14,27 @@ public class ReadRegistriesDto {
     private Integer pages;
 
     @NotNull
-    private Integer elementsPerPage;
+    private Integer size;
 
     @NotNull
     private Integer totalElements;
+
+    private Integer highlightedElement;
 
     public ReadRegistriesDto(
             Set<Registry> registries,
             @NotNull Integer page,
             @NotNull Integer pages,
-            @NotNull Integer elementsPerPage,
-            @NotNull Integer totalElements
+            @NotNull Integer size,
+            @NotNull Integer totalElements,
+            Integer highlightedElement
     ) {
         this.registries = registries;
-        this.elementsPerPage = elementsPerPage;
+        this.size = size;
         this.page = page;
         this.pages = pages;
         this.totalElements = totalElements;
+        this.highlightedElement = highlightedElement;
     }
 
     public Set<Registry> getRegistries() {
@@ -55,17 +59,21 @@ public class ReadRegistriesDto {
         return pages;
     }
 
+    public Integer getHighlightedElement() {
+        return highlightedElement;
+    }
+
     public void setPages(@NotNull Integer pages) {
         this.pages = pages;
     }
 
     @NotNull
-    public Integer getElementsPerPage() {
-        return elementsPerPage;
+    public Integer getSize() {
+        return size;
     }
 
-    public void setElementsPerPage(@NotNull Integer elementsPerPage) {
-        this.elementsPerPage = elementsPerPage;
+    public void setSize(@NotNull Integer size) {
+        this.size = size;
     }
 
     @NotNull
@@ -75,5 +83,9 @@ public class ReadRegistriesDto {
 
     public void setTotalElements(@NotNull Integer totalElements) {
         this.totalElements = totalElements;
+    }
+
+    public void setHighlightedElement(Integer highlightedElement) {
+        this.highlightedElement = highlightedElement;
     }
 }
