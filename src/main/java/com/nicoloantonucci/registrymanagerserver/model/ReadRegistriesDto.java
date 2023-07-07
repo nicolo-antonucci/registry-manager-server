@@ -2,10 +2,10 @@ package com.nicoloantonucci.registrymanagerserver.model;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Set;
+import java.util.List;
 
 public class ReadRegistriesDto {
-    private Set<Registry> registries;
+    private List<Registry> registries;
 
     @NotNull
     private Integer page;
@@ -22,7 +22,7 @@ public class ReadRegistriesDto {
     private Integer highlightedElement;
 
     public ReadRegistriesDto(
-            Set<Registry> registries,
+            List<Registry> registries,
             @NotNull Integer page,
             @NotNull Integer pages,
             @NotNull Integer size,
@@ -37,11 +37,11 @@ public class ReadRegistriesDto {
         this.highlightedElement = highlightedElement;
     }
 
-    public Set<Registry> getRegistries() {
+    public List<Registry> getRegistries() {
         return registries;
     }
 
-    public void setRegistries(Set<Registry> registries) {
+    public void setRegistries(List<Registry> registries) {
         this.registries = registries;
     }
 

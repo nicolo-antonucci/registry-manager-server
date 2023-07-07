@@ -76,27 +76,39 @@ public class Registry {
         this.notes = notes;
     }
 
-    public Registry(PostRegistryBody postRegistryBody) {
-        this.name = postRegistryBody.getNewRegistry().getName();
-        this.city = postRegistryBody.getNewRegistry().getCity();
-        this.address = postRegistryBody.getNewRegistry().getAddress();
-        this.location = postRegistryBody.getNewRegistry().getLocation();
-        this.surname = postRegistryBody.getNewRegistry().getSurname();
-        this.email = postRegistryBody.getNewRegistry().getEmail();
-        this.notes = postRegistryBody.getNewRegistry().getNotes();
-        this.province = postRegistryBody.getNewRegistry().getProvince();
+    public Registry(NewRegistry newRegistry) {
+        this.name = newRegistry.getName();
+        this.city = newRegistry.getCity();
+        this.address = newRegistry.getAddress();
+        this.location = newRegistry.getLocation();
+        this.surname = newRegistry.getSurname();
+        this.email = newRegistry.getEmail();
+        this.notes = newRegistry.getNotes();
+        this.province = newRegistry.getProvince();
     }
 
-    public Registry(@NotNull Integer id, PostRegistryBody postRegistryBody) {
+    public Registry(UpdateRegistryBody updateRegistryBody) {
+        this.id = updateRegistryBody.getId();
+        this.name = updateRegistryBody.getName();
+        this.city = updateRegistryBody.getCity();
+        this.address = updateRegistryBody.getAddress();
+        this.location = updateRegistryBody.getLocation();
+        this.surname = updateRegistryBody.getSurname();
+        this.email = updateRegistryBody.getEmail();
+        this.notes = updateRegistryBody.getNotes();
+        this.province = updateRegistryBody.getProvince();
+    }
+
+    public Registry(@NotNull Integer id, NewRegistry updatedRegistry) {
         this.id = id;
-        this.name = postRegistryBody.getNewRegistry().getName();
-        this.city = postRegistryBody.getNewRegistry().getCity();
-        this.address = postRegistryBody.getNewRegistry().getAddress();
-        this.location = postRegistryBody.getNewRegistry().getLocation();
-        this.surname = postRegistryBody.getNewRegistry().getSurname();
-        this.email = postRegistryBody.getNewRegistry().getEmail();
-        this.notes = postRegistryBody.getNewRegistry().getNotes();
-        this.province = postRegistryBody.getNewRegistry().getProvince();
+        this.name = updatedRegistry.getName();
+        this.city = updatedRegistry.getCity();
+        this.address = updatedRegistry.getAddress();
+        this.location = updatedRegistry.getLocation();
+        this.surname = updatedRegistry.getSurname();
+        this.email = updatedRegistry.getEmail();
+        this.notes = updatedRegistry.getNotes();
+        this.province = updatedRegistry.getProvince();
     }
 
     public Integer getId() {

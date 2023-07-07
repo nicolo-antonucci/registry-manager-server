@@ -1,17 +1,21 @@
 package com.nicoloantonucci.registrymanagerserver.model;
 
+import jakarta.validation.constraints.NotNull;
+
 public class UpdateRegistryResponse {
-    private Boolean updated;
+    @NotNull
+    private Integer page;
 
-    public UpdateRegistryResponse(Boolean updated) {
-        this.updated = updated;
+    public UpdateRegistryResponse(@NotNull Integer page) {
+        this.page = page;
     }
 
-    public Boolean getUpdated() {
-        return updated;
+    @NotNull
+    public Integer getPage() {
+        return page;
     }
 
-    public void setUpdated(Boolean updated) {
-        this.updated = updated;
+    public void setPage(@NotNull Integer page) {
+        this.page = page;
     }
 }

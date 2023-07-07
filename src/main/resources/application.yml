@@ -21,3 +21,12 @@ spring:
   sql:
     init:
       mode: always
+  mail:
+    host: smtp.example.com
+    port: 25
+    username: username
+    password: password
+    smtp:
+      auth: true
+      starttls:
+        enable: true
