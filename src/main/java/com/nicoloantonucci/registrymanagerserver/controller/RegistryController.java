@@ -155,8 +155,7 @@ public class RegistryController {
             if (result.isEmpty()) throw new Exception();
 
             Registry registry = result.get();
-            this.mailService.sendMailToUser(registry);
-            return new ResponseSchema<>(true, true, null);
+            return new ResponseSchema<>(true, this.mailService.sendMailToUser(registry), null);
         } catch (Exception e) {
             return new ResponseSchema<>(false, false, new BaseError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
         }

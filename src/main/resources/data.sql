@@ -19,5 +19,6 @@ VALUES (1, 'Mario', 'Rossi', 'mario.rossi@example.it'),
 (18, 'Bonnie', 'Fritz', 'bonnie.fritz@example.it'),
 (19, 'Mark', 'Doe', 'mark.doe@example.it'),
 (20, 'Jane', 'Doe', 'jane.doe@example.it'),
-(21, 'Jill', 'Valentine', 'jill.valentine@example.it');
+(21, 'Jill', 'Valentine', 'jill.valentine@example.it'),
+(22, 'Nicolo', 'Antonucci', 'nicoloantonucci93@gmail.com');
 
