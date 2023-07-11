@@ -13,23 +13,23 @@ public interface RegistryRepository extends JpaRepository<Registry, Integer> {
 
     @Query(
             value = "SELECT * FROM registries r " +
-                    "WHERE (LENGTH(:name) = 0 OR r.name LIKE %:name%) " +
-                    "AND (LENGTH(:surname) = 0 OR r.surname LIKE %:surname%) " +
-                    "AND (LENGTH(:address) = 0 OR address LIKE %:address%) " +
-                    "AND (LENGTH(:location) = 0 OR location LIKE %:location%) " +
-                    "AND (LENGTH(:city) = 0 OR city LIKE %:city%) " +
-                    "AND (LENGTH(:province) = 0 OR province LIKE %:province%) " +
-                    "AND (LENGTH(:email) = 0 OR email LIKE %:email%) " +
-                    "AND (LENGTH(:notes) = 0 OR notes LIKE %:notes%)",
+                    "WHERE (:name IS NULL OR LENGTH(:name) = 0 OR r.name LIKE %:name%) " +
+                    "AND (:surname IS NULL OR LENGTH(:surname) = 0 OR r.surname LIKE %:surname%) " +
+                    "AND (:address IS NULL OR LENGTH(:address) = 0 OR address LIKE %:address%) " +
+                    "AND (:location IS NULL OR LENGTH(:location) = 0 OR location LIKE %:location%) " +
+                    "AND (:city IS NULL OR LENGTH(:city) = 0 OR city LIKE %:city%) " +
+                    "AND (:province IS NULL OR LENGTH(:province) = 0 OR province LIKE %:province%) " +
+                    "AND (:email IS NULL OR LENGTH(:email) = 0 OR email LIKE %:email%) " +
+                    "AND (:notes IS NULL OR LENGTH(:notes) = 0 OR notes LIKE %:notes%)",
             countQuery = "SELECT count(*) FROM registries r " +
-                    "WHERE (LENGTH(:name) = 0 OR r.name LIKE %:name%) " +
-                    "AND (LENGTH(:surname) = 0 OR r.surname LIKE %:surname%) " +
-                    "AND (LENGTH(:address) = 0 OR address LIKE %:address%) " +
-                    "AND (LENGTH(:location) = 0 OR location LIKE %:location%) " +
-                    "AND (LENGTH(:city) = 0 OR city LIKE %:city%) " +
-                    "AND (LENGTH(:province) = 0 OR province LIKE %:province%) " +
-                    "AND (LENGTH(:email) = 0 OR email LIKE %:email%) " +
-                    "AND (LENGTH(:notes) = 0 OR notes LIKE %:notes%)",
+                    "WHERE (:name IS NULL OR LENGTH(:name) = 0 OR r.name LIKE %:name%) " +
+                    "AND (:surname IS NULL OR LENGTH(:surname) = 0 OR r.surname LIKE %:surname%) " +
+                    "AND (:address IS NULL OR LENGTH(:address) = 0 OR address LIKE %:address%) " +
+                    "AND (:location IS NULL OR LENGTH(:location) = 0 OR location LIKE %:location%) " +
+                    "AND (:city IS NULL OR LENGTH(:city) = 0 OR city LIKE %:city%) " +
+                    "AND (:province IS NULL OR LENGTH(:province) = 0 OR province LIKE %:province%) " +
+                    "AND (:email IS NULL OR LENGTH(:email) = 0 OR email LIKE %:email%) " +
+                    "AND (:notes IS NULL OR LENGTH(:notes) = 0 OR notes LIKE %:notes%)",
             nativeQuery = true
     )
     Page<Registry> findAllByQuery(@Param("name") String name,
