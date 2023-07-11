@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS registries;
+
+CREATE TABLE IF NOT EXISTS registries (
+	id INT NOT NULL PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	surname VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	address VARCHAR(255),
+	location VARCHAR(255),
+	city VARCHAR(255),
+	province VARCHAR(255),
+	notes VARCHAR(255)
+);
